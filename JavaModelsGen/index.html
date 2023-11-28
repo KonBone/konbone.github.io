@@ -101,7 +101,7 @@
             let type = typeof obj;
             if (type == typeof "") return "String";
             else if (type == typeof 1) return "int";
-            else if (type == typeof true) return "bolean";
+            else if (type == typeof true) return "boolean";
             else if (Array.isArray(obj)) return "List<Object>";
             else return "Object";
         }
