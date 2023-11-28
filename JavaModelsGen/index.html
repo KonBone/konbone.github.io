@@ -1,0 +1,131 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        * {
+            /* outline: 2px red solid; */
+            box-sizing: border-box;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 1920px;
+        }
+
+        .grid_2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        main {
+            height: 100%;
+        }
+
+        .generate {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 10px;
+            justify-content: space-between;
+        }
+
+        #model {
+            height: 100%;
+            resize: none;
+        }
+
+        .generate > button {
+            margin-top: auto;
+        }
+
+        .generate > label, .generate > input, .generate > textarea {
+            margin-bottom: 10px;
+        }
+
+        .result {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        #code {
+            height: 100%;
+            white-space: pre;
+            cursor: copy;
+            border: 1px gray solid;
+            border-radius: 3px;
+            padding: 4px;
+            margin: 10px 0;
+        }
+    </style>
+    <main class="container grid_2col">
+        <section class="generate">
+            <label for="model">Объект JSON</label>
+            <input id="model_name" type="text" placeholder="Название класса">
+            <textarea name="model" id="model" cols="30"></textarea>
+            <button onclick="transform()">Преобразовать</button>
+        </section>
+        <section class="result">
+            <p>Результат:</p>
+            <small>Нажмите на код, чтобы скопировать</small>
+            <code id="code" onclick="navigator.clipboard.writeText(this.innerText)" alt="">class ExampleModel extends Model {
+    public int a;
+}</code>
+            <small>Если в переданной модели есть поля типа <code>float</code>, необходимо в ручную поменять соответсвующее поле с <code>int</code> на <code>float</code> </small>
+        </section>
+    </main>
+    <script>
+        function transform() {
+            let model = document.querySelector("#model");
+            let modelName = document.querySelector("#model_name");
+            model = JSON.parse(model.value);
+            modelName = modelName.value;
+            let code = document.querySelector("#code");
+            let modelRepr = generateModelRepr(model);
+            code.innerText = generateText(modelRepr, modelName);
+        }
+
+        function convertObjectToJavaType(obj) {
+            let type = typeof obj;
+            if (type == typeof "") return "String";
+            else if (type == typeof 1) return "int";
+            else if (Array.isArray(obj)) return "List<Object>";
+            else return "Object";
+        }
+
+        function generateModelRepr(model) {
+            if (Array.isArray(model)) {
+                for (const m of model) generateModelRepr(m);
+                return null;
+            }
+            let res = {};
+            for (const [key, value] of Object.entries(model)) {
+                res[key] = convertObjectToJavaType(value);
+            }
+            return res;
+        }
+
+        function generateText(modelRepr, modelName) {
+            let res = "class " + modelName + " extends Model {\n";
+            for (const [key, value] of Object.entries(modelRepr)) {
+                res += "\t";
+                res += `public ${value} ${key};`;
+                res += "\n";
+            }
+            return res + "}";
+        }
+    </script>
+</body>
+</html>
