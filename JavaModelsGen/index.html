@@ -119,7 +119,7 @@
         }
 
         function generateText(modelRepr, modelName) {
-            let res = "class " + modelName + " extends Model {\n";
+            let res = "public class " + modelName + " extends Model {\n";
             for (const [key, value] of Object.entries(modelRepr)) {
                 res += "\t";
                 res += `public ${value} ${key};`;
