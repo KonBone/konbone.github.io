@@ -4,6 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="script.js"></script>
 </head>
 <body>
     <style>
@@ -83,50 +84,7 @@
             <code id="code" onclick="navigator.clipboard.writeText(this.innerText)" alt="">class ExampleModel extends Model {
     public int a;
 }</code>
-            <small>Если в переданной модели есть поля типа <code>float</code>, необходимо в ручную поменять соответсвующее поле с <code>int</code> на <code>float</code> </small>
         </section>
     </main>
-    <script>
-        function transform() {
-            let model = document.querySelector("#model");
-            let modelName = document.querySelector("#model_name");
-            model = JSON.parse(model.value);
-            modelName = modelName.value;
-            let code = document.querySelector("#code");
-            let modelRepr = generateModelRepr(model);
-            code.innerText = generateText(modelRepr, modelName);
-        }
-
-        function convertObjectToJavaType(obj) {
-            let type = typeof obj;
-            if (type == typeof "") return "String";
-            else if (type == typeof 1) return "int";
-            else if (type == typeof true) return "boolean";
-            else if (Array.isArray(obj)) return "List<Object>";
-            else return "Object";
-        }
-
-        function generateModelRepr(model) {
-            if (Array.isArray(model)) {
-                for (const m of model) generateModelRepr(m);
-                return null;
-            }
-            let res = {};
-            for (const [key, value] of Object.entries(model)) {
-                res[key] = convertObjectToJavaType(value);
-            }
-            return res;
-        }
-
-        function generateText(modelRepr, modelName) {
-            let res = "public class " + modelName + " extends Model {\n";
-            for (const [key, value] of Object.entries(modelRepr)) {
-                res += "\t";
-                res += `public ${value} ${key};`;
-                res += "\n";
-            }
-            return res + "}";
-        }
-    </script>
 </body>
 </html>

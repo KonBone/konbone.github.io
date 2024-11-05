@@ -10,7 +10,7 @@ var height = drawer.height,
     width = drawer.width;
 
 
-var baseStep = Math.floor(width / 25);
+var baseStep = Math.floor(width / 5);
 var baseWidth = Math.floor(width / baseStep) + 1 + 1,
     baseHeight = Math.floor(height / baseStep) + 1 + 1;
 var baseLength = baseHeight * baseWidth;
@@ -92,7 +92,7 @@ refillBase(0);
 refillBase(1);
 
 var state = 0;
-var animStep = 20;
+var animStep = 100;
 var index = 2;
 
 
@@ -116,7 +116,7 @@ function shot() {
     drawer.draw(true);
 }
 
-async function main() {
+function main() {
     shot();
     setTimeout(main, 1);
 }
